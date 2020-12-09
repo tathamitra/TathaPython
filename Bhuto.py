@@ -7,6 +7,8 @@ import os
 import win32com.client as win32
 import random
 from googlesearch import search
+import requests
+import json
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -18,6 +20,7 @@ dict1 = {"manager":"sourav.das@hyland.com",
          "tatha": "tathagata.mitra@hyland.com",
          "partha": "partha.basak@hyland.com",
          "pitamaha": "debabrata.mandal@hyland.com"}
+dict2 = {"one":"1","two":"2","three":"3"}
 
 def speak(audio):
     engine.say(audio)
@@ -34,6 +37,14 @@ def wishme():
 
     speak('Hi Sir, I am Bhuto. How May I help You')
 
+def provide_headlines(item):
+  data = requests.get(
+    'http://newsapi.org/v2/top-headlines?'
+    'country=in&'
+    'apiKey=64d99f86b3a74b6092238914e545a1a9'
+  )
+  news=json.loads(data.text)
+  return (news['articles'][item]['title'])
 
 def takecommand():
     '''
@@ -64,6 +75,8 @@ def sendmail(to,subject,body):
     mail.Subject = subject
     mail.Body = body
     mail.Display()
+
+
 
 
 if __name__ == '__main__':
@@ -104,8 +117,6 @@ if __name__ == '__main__':
     print(songs)
     os.startfile(os.path.join(music_dir,songs[randint]))
 
-
-
   elif 'time' in query:
       strTime = datetime.datetime.now().strftime("%H:%M:%S")
       speak(f"the time is {strTime}")
@@ -130,4 +141,15 @@ if __name__ == '__main__':
           print("sorry i am unable to send this email")
 
 
+  elif 'news' in query:
 
+      try:
+          speak("Top 3 headlines")
+          noOfHeadlines= takecommand()
+          for i in range(3):
+              print(provide_headlines(i))
+              speak(provide_headlines(i))
+
+      except Exception as e:
+          print(e)
+          print("Sorry this service is down at the moment")
