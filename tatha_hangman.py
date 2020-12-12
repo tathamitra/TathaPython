@@ -1,55 +1,45 @@
+'''
+HANGMAN
+'''
+
 import random
-from time import sleep
-
-words = ['rainbow', 'computer', 'science', 'programming',
-         'python', 'mathematics', 'player', 'condition',
-         'reverse', 'water', 'board', 'geeks']
-
-def wait():
-     for i in range(5):
-         print('.',end='')
-         sleep(.5)
+l1 = ["Greater","Amazing","students"]
+totalAttempts =10
+wrong=[]
+right =[]
+selectedWord = random.choice(l1).lower()
+shownWord = ['_']*len(selectedWord)
 
 
-chosenword = random.choice(words)
+def check_word(word):
+  global totalAttempts
+  if word in selectedWord:
+      right.append(word)
+      for index in (idx for idx,l in enumerate(selectedWord) if l==word):
+       shownWord[index] = word
+      return shownWord
+  else:
+     totalAttempts -= 1
+     wrong.append(word)
+     print(f"you have {totalAttempts} attempts left")
+     return shownWord
 
-right = ['_'] * len(chosenword)
-wrong = []
-
-def update():
-    for i in right:
-        print(i,end = ' ')
+if __name__ == '__main__':
+ print("Start to play")
 
 
-print("let me think of a word")
-wait()
-print("\nthe word has ", len(chosenword) , "letters")
-update()
-print("\nenter the number of choices")
-numofchoice = int(input())
+while totalAttempts>0:
+  print("Enter a word")
+  word = input().lower()
+  if word in wrong:
+      print(f"you have already guessed this wrongly,still {totalAttempts} attepmts left")
+  if word in right:
+      print(f"you have already guessed this correctly,choose some other character")
+  else:
+   print(check_word(word))
+   print(wrong)
 
-while True:
-    print("\nchoose a letter")
-    letter = input()
-
-    if letter in chosenword:
-        index = 0
-        for i in chosenword:
-            if i == letter:
-                right[index] = letter
-            index = index +1
-        update()
-    else:
-        if letter not in wrong:
-            wrong.append(letter)
-            print("number of attempts left:",numofchoice-len(wrong))
-        else:
-            print("you already guessed that wrongly")
-        update()
-    if len(wrong) == numofchoice:
-        print("you loose")
-        print("the correct answer is :", chosenword)
-        break;
-    if '_' not in right:
-        print("\nyou win")
-        break;
+  if "_" not in shownWord:
+      print("congratulations")
+      break;
+print("you lost")
